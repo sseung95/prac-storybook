@@ -1,13 +1,12 @@
 import type { StorybookConfig } from '@storybook/react-vite';
-import { mergeConfig } from 'vite';
+import path from 'path';
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',
-    '@storybook/addon-onboarding',
-    '@storybook/addon-interactions',
+    // '@storybook/addon-styling-webpack',
   ],
   core: {
     builder: '@storybook/builder-vite',
@@ -18,6 +17,16 @@ const config: StorybookConfig = {
   },
   docs: {
     autodocs: 'tag',
+  },
+  // https://storybook.js.org/docs/builders/webpack#typescript-modules-are-not-resolved-within-storybook
+  viteFinal: async (config) => {
+    if (config.resolve) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        '@': path.resolve(__dirname, '../src'),
+      };
+    }
+    return config;
   },
 };
 export default config;
